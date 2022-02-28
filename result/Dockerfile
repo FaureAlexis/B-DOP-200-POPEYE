@@ -1,3 +1,4 @@
 FROM node:12-alpine
-EXPOSE 80
 RUN npm install
+EXPOSE 80
+CMD["node", "index.js"]
