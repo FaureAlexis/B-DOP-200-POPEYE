@@ -5,4 +5,5 @@ WORKDIR src/
 RUN mvn package
 
 FROM openjdk:8-jre-alpine
-RUN java -jar worker-jar-with-dependencies.jar
+WORKDIR target/
+CMD ["java", "-jar", "worker-jar-with-dependencies.jar"]
