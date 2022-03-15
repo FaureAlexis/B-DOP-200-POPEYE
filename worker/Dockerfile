@@ -1,9 +1,10 @@
 FROM maven:3.5-jdk-8-alpine AS builder
-WORKDIR .
+COPY . .
+WORKDIR /./src/
 RUN mvn dependency:resolve
-WORKDIR src/
+WORKDIR /.
 RUN mvn package
 
 FROM openjdk:8-jre-alpine
-WORKDIR target/
+WORKDIR /./target/
 CMD ["java", "-jar", "worker-jar-with-dependencies.jar"]
