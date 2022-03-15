@@ -6,20 +6,49 @@ services:
     build:
       context: .
       dockerfile: "poll/Dockerfile"
+    networks:
+      - poll-tier  
     ports: 
       - "5000:80"
+    restart: "on-failure"  
+
   redis:
     image: redis
+    networks:
+      - poll-tier
+      - back-tier
     ports:
       - "6379"
+    restart: "on-failure"  
+    
   worker:
     build:
       context: .
       dockerfile: "worker/Dockerfile"
+    restart: "on-failure"  
+  
   result:
     image: node:12-alpine
     build:
       context: .
       dockerfile: "result/dockerfile"
+    networks:
+      - result-tier  
     ports:
-      - "5001:80"      
+      - "5001:80"
+    restart: "on-failure"  
+  
+  db:
+    image: postgres
+    networks:
+      - result-tier
+      - back-tier
+
+
+volumes:
+  db-data:
+
+networks:
+  poll-tier:
+  result-tier:
+  back-tier:        
