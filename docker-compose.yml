@@ -1,0 +1,25 @@
+version : '3'
+
+services:
+  poll:
+    image: python:3
+    build:
+      context: .
+      dockerfile: "poll/Dockerfile"
+    ports: 
+      - "5000:80"
+  redis:
+    image: redis
+    ports:
+      - "6379"
+  worker:
+    build:
+      context: .
+      dockerfile: "worker/Dockerfile"
+  result:
+    image: node:12-alpine
+    build:
+      context: .
+      dockerfile: "result/dockerfile"
+    ports:
+      - "5001:80"      
