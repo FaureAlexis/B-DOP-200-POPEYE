@@ -1,4 +1,4 @@
-FROM maven:3.5-jdk-8-alpine AS builder
+FROM maven:3.8.4-jdk-11-slim AS builder
 COPY . .
 WORKDIR /./src/
 RUN mvn dependency:resolve
