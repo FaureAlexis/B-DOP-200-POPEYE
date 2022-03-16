@@ -5,6 +5,6 @@ RUN mvn dependency:resolve
 WORKDIR /.
 RUN mvn package
 
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre-slim
 WORKDIR /./target/
 CMD ["java", "-jar", "worker-jar-with-dependencies.jar"]
