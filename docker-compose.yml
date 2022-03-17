@@ -12,7 +12,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
     ports: 
-      - "5002:80"
+      - "5000:80"
     restart: "on-failure"  
 
   redis:
