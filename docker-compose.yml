@@ -12,7 +12,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
     depends_on:
-      -db
+      - db
     ports: 
       - "5002:80"
     restart: "on-failure"  
@@ -48,6 +48,8 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
+    depends_on:
+      - db  
     ports:
       - "5001:80"
     restart: "on-failure"
@@ -57,8 +59,6 @@ services:
     networks:
       - result-tier
       - back-tier
-    depends_on:
-      -db  
     volumes:
       - db-data:/var/lib/postgresql/data  
     environment:

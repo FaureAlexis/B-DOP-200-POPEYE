@@ -1,6 +1,6 @@
 FROM maven:3.8.4-jdk-11-slim AS builder
-WORKDIR /app/
-COPY . .
+WORKDIR /app
+COPY ./* .
 RUN mvn dependency:resolve
 RUN mvn package
 
