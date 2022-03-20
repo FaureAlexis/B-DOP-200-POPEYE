@@ -1,6 +1,6 @@
 FROM node:12-alpine
 WORKDIR /app
-COPY ./* .
+COPY . .
 RUN npm install
 EXPOSE 80
 CMD ["npm", "start"]

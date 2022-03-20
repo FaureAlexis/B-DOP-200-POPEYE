@@ -12,13 +12,17 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
     depends_on:
-      - db
+      - redis
     ports: 
       - "5002:80"
     restart: "on-failure"  
 
   redis:
     image: redis
+    expose:
+      - 6379
+    depends_on:
+      - db
     networks:
       - poll-tier
       - back-tier
@@ -26,13 +30,18 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
     ports:
-      - "6379"
+      - "6379:6379"
     restart: "on-failure"  
     
   worker:
     build:
-      context: .
-      dockerfile: "worker/Dockerfile"
+      context: "worker/"
+      dockerfile: "Dockerfile"
+    networks: 
+      - back-tier  
+    depends_on:
+      - db
+      - redis  
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
@@ -46,25 +55,35 @@ services:
     networks:
       - result-tier  
     environment:
+      PORT: 80
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
     depends_on:
-      - db  
+      - db
+      - redis
+      - worker
+      - poll
     ports:
       - "5001:80"
     restart: "on-failure"
   
   db:
-    image: postgres
+    image: postgres:latest
+    container_name: db
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
     networks:
       - result-tier
       - back-tier
     volumes:
-      - db-data:/var/lib/postgresql/data  
+      - db-data:/var/lib/postgresql/data 
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
-    restart: "on-failure"  
+    restart: "always"  
 
 
 volumes:
@@ -72,5 +91,8 @@ volumes:
 
 networks:
   poll-tier:
+    driver: bridge
   result-tier:
-  back-tier:        
+    driver: bridge
+  back-tier: 
+    driver: bridge       

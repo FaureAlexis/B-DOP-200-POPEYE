@@ -11,7 +11,7 @@ option_c = os.getenv('OPTION_C', "Puppet")
 option_d = os.getenv('OPTION_B', "SaltStack")
 hostname = socket.gethostname()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 
 def get_redis():

@@ -1,6 +1,5 @@
 var express = require('express'),
     async = require('async'),
-    pg = require("pg"),
     path = require("path"),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
@@ -11,7 +10,20 @@ var express = require('express'),
 
 io.set('transports', ['polling']);
 
-var port = 80;
+const { Client } = require('pg');
+
+
+var port = process.env.PORT;
+var username = process.env.POSTGRES_USER;
+var password = process.env.POSTGRES_PASSWORD;
+const connectUrl = `postgres://${username}:${password}@db/${username}`;
+const client = new Client({
+  user: username,
+  host: "db",
+  database: username,
+  port: 5432,
+  password: password,
+})
 
 io.sockets.on('connection', function (socket) {
 
@@ -25,12 +37,16 @@ io.sockets.on('connection', function (socket) {
 async.retry(
   {times: 1000, interval: 1000},
   function(callback) {
-      pg.connect('postgres://postgres:password@db/postgres', function(err, client, done) {
-          if (err) {
-              console.error("Waiting for db");
-          }
-          callback(err, client);
-      });
+      client.connect().then().catch((err) => { 
+        console.log(err);          
+         callback(err, client);
+         } );
+      //pg.connect(connectUrl, function(err, client, done) {
+        //  if (err) {
+          //    console.error("Waiting for db");
+          //}
+          //callback(err, client);
+      //});
   },
   function(err, client) {
     if (err) {
